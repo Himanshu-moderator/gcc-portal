@@ -1,78 +1,72 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Radar } from 'lucide-react'
 import { ROLE_LIST } from '../roles'
-import { useAuth, nextStep } from '../auth'
-import { Background, ROLE_ICON, Reveal, Sources } from '../ui'
+import type { RoleId } from '../roles'
+import { nextStep, useAuth } from '../auth'
+import { Background, Sources } from '../ui'
+import Select from '../Select'
 import { HEADLINES, SOURCES } from '../data'
 
 export default function Landing() {
   const nav = useNavigate()
   const { session, guest } = useAuth()
-
-  const stats = [
-    { v: `~${HEADLINES.totalVestian.toLocaleString()}`, l: 'GCCs in India (Vestian)', n: 'NASSCOM units: ' + HEADLINES.nasscomUnits },
-    { v: HEADLINES.fy28, l: 'GCCs expected by FY28' },
-    { v: HEADLINES.stateGccs, l: 'new GCCs states are targeting by 2031' },
-    { v: '₹' + HEADLINES.avgRent, l: 'avg office rent / sq ft / month' },
-  ]
+  const [role, setRole] = useState<RoleId>('company')
+  const def = ROLE_LIST.find((r) => r.id === role) ?? ROLE_LIST[0]
 
   return (
-    <div className="app" data-role="landing">
-      <Background variant="landing" />
-      <div className="content wrap">
-        <nav className="nav">
-          <div className="logo"><b><Radar size={20} /></b>GCC Portal</div>
-          <div className="row">
-            {session ? (
-              <button className="btn small" onClick={() => nav(nextStep(session))}>Continue <ArrowRight size={14} style={{ verticalAlign: -2 }} /></button>
-            ) : (
-              <>
-                <button className="btn ghost small" onClick={() => nav('/auth')}>Sign in</button>
-                <button className="btn small" onClick={() => nav('/auth?mode=signup')}>Create account</button>
-              </>
-            )}
-          </div>
-        </nav>
+    <div className="app" data-role={role}>
+      <Background variant={role} />
+      <div className="content center" style={{ alignContent: 'center' }}>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="logo" style={{ marginBottom: 22 }}>
+            <b><Radar size={20} /></b>GCC Portal
+          </motion.div>
+          <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} style={{ fontSize: 'clamp(30px, 4.6vw, 48px)', textAlign: 'center', lineHeight: 1.1, maxWidth: 640 }}>
+            India's GCC ecosystem, <span style={{ color: 'var(--accent)' }}>one trusted view</span>
+          </motion.h1>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="muted" style={{ marginTop: 12, textAlign: 'center', maxWidth: 520 }}>
+            Verified organisations. Sourced data. A portal shaped around what you came to do.
+          </motion.p>
 
-        <section className="hero">
-          <Reveal><span className="chip">One source of truth for India's GCC ecosystem</span></Reveal>
-          <Reveal i={1}><h1 style={{ marginTop: 18 }}>Stop guessing.<br /><span>Know the GCC market.</span></h1></Reveal>
-          <Reveal i={2}><p>Companies, advisors, landlords and governments all need the same market, but each needs a different slice. Tell us who you are and your portal shapes itself around you.</p></Reveal>
-        </section>
-
-        <div className="roles">
-          {ROLE_LIST.map((r, i) => {
-            const Icon = ROLE_ICON[r.id]
-            return (
-              <motion.div key={r.id} data-role={r.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 + i * 0.09, duration: 0.5 }}>
-                <button className="role-card" style={{ width: '100%', color: 'inherit' }} onClick={() => nav(`/auth?mode=signup&role=${r.id}`)}>
-                  <div className="ico"><Icon size={22} /></div>
-                  <h3>{r.label}</h3>
-                  <p>{r.tagline}. {r.goal}</p>
-                  <div className="row" style={{ justifyContent: 'space-between', marginTop: 8 }}>
-                    <span style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 14 }}>Join as {r.label.split(' ')[0].toLowerCase()} <ArrowRight size={14} style={{ verticalAlign: -2 }} /></span>
-                  </div>
-                </button>
-                <button className="chip" style={{ marginTop: 10, width: '100%', justifyContent: 'center' }} onClick={() => { guest(r.id); nav('/app') }}>
-                  Just look around as this role
-                </button>
-              </motion.div>
-            )
-          })}
-        </div>
-
-        <div className="stats">
-          {stats.map((s) => (
-            <div key={s.l} className="card">
-              <div style={{ fontFamily: 'var(--display)', fontSize: 28, fontWeight: 700 }}>{s.v}</div>
-              <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{s.l}</div>
-              {s.n && <div className="src">{s.n}</div>}
+          <motion.div className="card login" style={{ marginTop: 30 }} initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.2, duration: 0.5 }}>
+            <h2 style={{ fontSize: 24 }}>Sign in to continue</h2>
+            <p className="muted" style={{ marginTop: 6, fontSize: 14 }}>{def.tagline}.</p>
+            <div style={{ marginTop: 18 }}>
+              <Select
+                label="I am a"
+                placeholder="Choose your role"
+                value={[role]}
+                onChange={(v) => v[0] && setRole(v[0] as RoleId)}
+                options={ROLE_LIST.map((r) => ({ value: r.id, label: r.label, hint: r.goal }))}
+              />
             </div>
-          ))}
+            {session ? (
+              <button className="btn" style={{ width: '100%', marginTop: 20 }} onClick={() => nav(nextStep(session))}>
+                Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} />
+              </button>
+            ) : (
+              <button className="btn" style={{ width: '100%', marginTop: 20 }} onClick={() => nav(`/auth?role=${role}`)}>
+                Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} />
+              </button>
+            )}
+            {!session && (
+              <div style={{ textAlign: 'center', marginTop: 14 }}>
+                <button className="linkbtn" onClick={() => { guest(role); nav('/app') }}>Preview this portal without signing in</button>
+              </div>
+            )}
+          </motion.div>
+
+          <div className="stats-line">
+            <span><b>~{HEADLINES.totalVestian.toLocaleString()}</b>GCCs in India</span>
+            <span><b>{HEADLINES.stateGccs}</b>new GCCs targeted by 2031</span>
+            <span><b>₹{HEADLINES.avgRent}</b>avg rent / sq ft / month</span>
+          </div>
+          <div style={{ marginTop: 10, textAlign: 'center' }}>
+            <Sources items={[SOURCES.vestian, SOURCES.cbreStates, SOURCES.anarock]} />
+          </div>
         </div>
-        <Sources items={[SOURCES.vestian, SOURCES.vestianFy28, SOURCES.cbreStates, SOURCES.anarock]} />
-        <p className="src" style={{ marginBottom: 40 }}>Different reports quote different counts: Vestian ~1,700 centres, NASSCOM 2,900+ units. Part of what this portal is for is showing where numbers disagree, and why.</p>
       </div>
     </div>
   )

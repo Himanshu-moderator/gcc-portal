@@ -6,7 +6,8 @@ import { ArrowLeft, Lock, ShieldCheck } from 'lucide-react'
 import { REAL_AUTH, nextStep, useAuth } from '../auth'
 import { ROLE_LIST, isRole } from '../roles'
 import type { RoleId } from '../roles'
-import { Background, ROLE_ICON } from '../ui'
+import { Background } from '../ui'
+import Select from '../Select'
 
 export default function Auth() {
   const nav = useNavigate()
@@ -53,17 +54,7 @@ export default function Auth() {
             <AnimatePresence initial={false}>
               {mode === 'signup' && (
                 <motion.div key="extra" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
-                  <label className="lbl">I am a</label>
-                  <div className="rolepick">
-                    {ROLE_LIST.map((r) => {
-                      const Icon = ROLE_ICON[r.id]
-                      return (
-                        <button key={r.id} type="button" className={role === r.id ? 'on' : ''} onClick={() => setRole(r.id)}>
-                          <Icon size={14} style={{ verticalAlign: -2, marginRight: 6 }} />{r.label}
-                        </button>
-                      )
-                    })}
-                  </div>
+                  <Select label="I am a" placeholder="Choose your role" value={[role]} onChange={(v) => v[0] && setRole(v[0] as RoleId)} options={ROLE_LIST.map((r) => ({ value: r.id, label: r.label }))} />
                   <label className="lbl">Your name</label>
                   <input className="input" required value={form.name} onChange={set('name')} autoComplete="name" />
                   <label className="lbl">Organisation</label>

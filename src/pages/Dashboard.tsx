@@ -41,6 +41,8 @@ export default function Dashboard() {
   const role = ROLES[session.profile.role]
   const views = VIEWS[role.id]
   const view = views[tab]
+  const ob = session.profile.onboarding ?? {}
+  const focus = [...(ob.state ?? []), ...(ob.cities ?? []), ...(ob.track ?? [])].slice(0, 6)
 
   return (
     <div className="app" data-role={role.id}>
@@ -67,8 +69,10 @@ export default function Dashboard() {
           <div className="top">
             <div>
               <span className="badge"><BadgeCheck size={13} /> Verified · {role.kinds.find((k) => k.id === session.profile.kind)?.label ?? role.label}</span>
-              <h1 style={{ marginTop: 10 }}>{view.title}</h1>
+              <p className="muted" style={{ marginTop: 14, fontSize: 15 }}>Welcome, {(session.profile.name || 'Guest').split(' ')[0]}</p>
+              <h1 style={{ marginTop: 2 }}>{view.title}</h1>
               <p className="muted" style={{ marginTop: 6, maxWidth: 640 }}>{view.subtitle}</p>
+              {focus.length > 0 && <div className="focus">{focus.map((f) => <span key={f} className="chip on">{f}</span>)}</div>}
             </div>
           </div>
           <AnimatePresence mode="wait">

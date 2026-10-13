@@ -3,12 +3,19 @@
 
 export type RoleId = 'company' | 'consultant' | 'realestate' | 'government'
 
-export interface Question {
+export interface Field {
   key: string
-  title: string
-  hint: string
+  label: string
+  placeholder: string
   multi?: boolean
   options: string[]
+}
+
+/** One onboarding screen. Fields are dropdowns; nothing here repeats what verification already asked. */
+export interface Step {
+  title: string
+  hint: string
+  fields: Field[]
 }
 
 export interface Proof {
@@ -34,7 +41,7 @@ export interface RoleDef {
   dashName: string
   kindTitle: string
   kinds: Kind[]
-  questions: Question[]
+  steps: Step[]
 }
 
 const CITIES = ['Bengaluru', 'Hyderabad', 'Delhi-NCR', 'Mumbai', 'Pune', 'Chennai']
@@ -63,11 +70,15 @@ export const ROLES: Record<RoleId, RoleDef> = {
         person: { field: 'Your employee ID', placeholder: 'Employee or director ID', upload: 'Employment proof or authorisation letter' },
       },
     ],
-    questions: [
-      { key: 'hq', title: 'Where is your headquarters?', hint: 'We tailor incentives and compliance notes to it.', options: ['United States', 'United Kingdom', 'Europe', 'Middle East', 'Asia-Pacific', 'Other'] },
-      { key: 'function', title: 'What will the India centre do?', hint: 'Pick everything that applies.', multi: true, options: ['Engineering / Tech', 'Finance & Accounting', 'Data & AI', 'Operations', 'HR & Shared Services', 'R&D'] },
-      { key: 'size', title: 'How big will it be in year one?', hint: 'Headcount you plan to hire.', options: ['Under 50', '50 to 200', '200 to 500', '500+'] },
-      { key: 'cities', title: 'Which cities are you considering?', hint: 'Pick your shortlist. We will rank them for you.', multi: true, options: CITIES },
+    steps: [
+      { title: 'Tell us about your centre', hint: 'Two quick choices.', fields: [
+        { key: 'hq', label: 'Where is your head office?', placeholder: 'Choose a country', options: ['United States', 'United Kingdom', 'Germany', 'France', 'Netherlands', 'Switzerland', 'Singapore', 'Japan', 'UAE', 'Australia', 'Canada', 'Other'] },
+        { key: 'function', label: 'What will the India centre do?', placeholder: 'Choose one or more', multi: true, options: ['Engineering / Tech', 'Finance & Accounting', 'Data & AI', 'Operations', 'HR & Shared Services', 'R&D'] },
+      ] },
+      { title: 'Plan the set-up', hint: 'We will rank your cities for you.', fields: [
+        { key: 'size', label: 'Team size in year one', placeholder: 'Choose a range', options: ['Under 50', '50 to 200', '200 to 500', '500+'] },
+        { key: 'cities', label: 'Cities you are considering', placeholder: 'Choose one or more', multi: true, options: CITIES },
+      ] },
     ],
   },
   consultant: {
@@ -107,10 +118,14 @@ export const ROLES: Record<RoleId, RoleDef> = {
         person: { field: 'Authorised representative ID', placeholder: 'ID number', upload: 'Authorisation letter' },
       },
     ],
-    questions: [
-      { key: 'practice', title: 'What does your firm advise on?', hint: 'Pick everything that applies.', multi: true, options: ['Entry strategy', 'Legal & entity setup', 'Tax & audit', 'Talent & hiring', 'Real estate advisory', 'Payroll / EOR'] },
-      { key: 'cities', title: 'Which markets do you cover?', hint: 'Your radar starts with these.', multi: true, options: CITIES },
-      { key: 'clients', title: 'Who are your typical clients?', hint: 'We use this to rank leads.', options: ['US & Canada', 'Europe & UK', 'Asia-Pacific', 'Middle East', 'Mixed'] },
+    steps: [
+      { title: 'Where do you work?', hint: 'Your radar starts here.', fields: [
+        { key: 'cities', label: 'Indian cities you cover', placeholder: 'Choose one or more', multi: true, options: CITIES },
+        { key: 'clients', label: 'Regions your clients come from', placeholder: 'Choose one or more', multi: true, options: ['US & Canada', 'United Kingdom', 'Europe', 'Middle East', 'Asia-Pacific'] },
+      ] },
+      { title: 'What do you want to track?', hint: 'We put these first.', fields: [
+        { key: 'track', label: 'Track', placeholder: 'Choose one or more', multi: true, options: ['New GCC entrants', 'State policy changes', 'Competing advisors', 'Market size and trends'] },
+      ] },
     ],
   },
   realestate: {
@@ -143,10 +158,14 @@ export const ROLES: Record<RoleId, RoleDef> = {
         person: { field: 'Authorised representative ID', placeholder: 'ID number', upload: 'Authorisation letter' },
       },
     ],
-    questions: [
-      { key: 'offer', title: 'What do you offer?', hint: 'Pick everything that applies.', multi: true, options: ['Grade A offices', 'Managed / flex space', 'Build-to-suit', 'Land & parks', 'Brokerage'] },
-      { key: 'cities', title: 'Where do you operate?', hint: 'Your cluster map opens on these.', multi: true, options: CITIES },
-      { key: 'ticket', title: 'Typical space per deal?', hint: 'Square feet you usually handle.', options: ['Under 20k sq ft', '20k to 100k sq ft', '100k to 300k sq ft', '300k+ sq ft'] },
+    steps: [
+      { title: 'Where do you operate?', hint: 'Your map opens here.', fields: [
+        { key: 'cities', label: 'Cities', placeholder: 'Choose one or more', multi: true, options: CITIES },
+        { key: 'ticket', label: 'Typical space per deal', placeholder: 'Choose a range', options: ['Under 20k sq ft', '20k to 100k sq ft', '100k to 300k sq ft', '300k+ sq ft'] },
+      ] },
+      { title: 'What do you want to see?', hint: 'We put these first.', fields: [
+        { key: 'track', label: 'Show me', placeholder: 'Choose one or more', multi: true, options: ['Companies looking for space', 'Cluster growth', 'Leasing benchmarks', 'Rent levels'] },
+      ] },
     ],
   },
   government: {
@@ -179,10 +198,14 @@ export const ROLES: Record<RoleId, RoleDef> = {
         person: { field: 'Your official service ID', placeholder: 'Employee or service ID', upload: 'Authorisation letter on letterhead' },
       },
     ],
-    questions: [
-      { key: 'state', title: 'Which state do you represent?', hint: 'Your policy desk opens on it.', options: ['Karnataka', 'Maharashtra', 'Tamil Nadu', 'Telangana', 'Gujarat', 'Andhra Pradesh', 'Other'] },
-      { key: 'dept', title: 'What is your focus?', hint: 'So we show the right levers.', options: ['Policy design', 'Investor outreach', 'Land & infrastructure', 'Skilling & talent'] },
-      { key: 'focus', title: 'What do you want to attract?', hint: 'Pick everything that applies.', multi: true, options: ['New GCCs', 'GCC expansion', 'Tier-2 city growth', 'R&D centres'] },
+    steps: [
+      { title: 'Which state do you represent?', hint: 'Your desk opens on it.', fields: [
+        { key: 'state', label: 'State', placeholder: 'Choose a state', options: ['Karnataka', 'Maharashtra', 'Tamil Nadu', 'Telangana', 'Gujarat', 'Andhra Pradesh', 'Kerala', 'Uttar Pradesh', 'Haryana', 'Rajasthan', 'Odisha', 'West Bengal', 'Madhya Pradesh', 'Other'] },
+        { key: 'focus', label: 'What do you want to attract?', placeholder: 'Choose one or more', multi: true, options: ['New GCCs', 'GCC expansion', 'Tier-2 city growth', 'R&D centres'] },
+      ] },
+      { title: 'Who do you compare with?', hint: 'We benchmark you against them.', fields: [
+        { key: 'peers', label: 'Peer states', placeholder: 'Choose one or more', multi: true, options: ['Karnataka', 'Maharashtra', 'Tamil Nadu', 'Telangana', 'Gujarat', 'Andhra Pradesh', 'Kerala', 'Uttar Pradesh', 'Haryana', 'Rajasthan', 'Odisha', 'West Bengal', 'Madhya Pradesh', 'Other'] },
+      ] },
     ],
   },
 }
