@@ -4,7 +4,7 @@
 
 **One source of truth for India's Global Capability Centre ecosystem. Each stakeholder gets a portal built for their job.**
 
-[**Live demo**](https://himanshu-moderator.github.io/gcc-portal/) · [The problem](#the-problem) · [Stakeholders](#four-stakeholders-four-portals) · [Data](#where-the-data-comes-from) · [Run it](#run-it-locally)
+[**Live demo**](https://gcc-portal.himanshu-etc1.workers.dev) · [The problem](#the-problem) · [Stakeholders](#four-stakeholders-four-portals) · [Data](#where-the-data-comes-from) · [Run it](#run-it-locally)
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
