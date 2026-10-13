@@ -5,6 +5,7 @@ import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
 import PolicyCard from '../../PolicyCard'
+import { ConnectButton } from '../../Connect'
 import { CITIES, HEADLINES, POLICIES, SAMPLE_ENTRANTS, SAMPLE_PROVIDERS, SOURCES } from '../../data'
 
 function Pipeline({ p }: { p: Profile }) {
@@ -25,13 +26,14 @@ function Pipeline({ p }: { p: Profile }) {
           {options.map((o) => <button key={o} className={`chip ${city === o ? 'on' : ''}`} onClick={() => setCity(o)}>{o}{mine.includes(o) ? ' ★' : ''}</button>)}
         </div>
         <table className="table">
-          <thead><tr><th>Company</th><th>From</th><th>City</th><th>Stage</th><th>Seats</th><th>Advisors</th><th>Fit</th></tr></thead>
+          <thead><tr><th>Company</th><th>From</th><th>City</th><th>Stage</th><th>Seats</th><th>Advisors</th><th>Fit</th><th></th></tr></thead>
           <tbody>
             {rows.map((e) => (
               <motion.tr key={e.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <td><b>{e.name}</b></td><td className="muted">{e.from}</td><td>{e.city}</td><td>{e.stage}</td><td>{e.size}</td>
                 <td>{e.advisors === 0 ? <span style={{ color: 'var(--accent)', fontWeight: 600 }}>Open</span> : e.advisors}</td>
                 <td style={{ minWidth: 110 }}><div className="bar"><i style={{ width: `${e.fit}%` }} /></div></td>
+                <td><ConnectButton party={{ name: e.name, detail: `${e.from}, looking at ${e.city}` }} /></td>
               </motion.tr>
             ))}
           </tbody>

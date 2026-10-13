@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, BadgeCheck, Database, Layers, Radar } from 'lucide-react'
-import { ALL_KINDS, ROLES, ROLE_LIST } from '../roles'
+import { ROLES, ROLE_LIST } from '../roles'
 import type { RoleId } from '../roles'
 import { nextStep, useAuth } from '../auth'
 import { Background, ROLE_ICON, Sources } from '../ui'
@@ -10,7 +10,7 @@ import Select from '../Select'
 import { useReport } from '../Report'
 import { HEADLINES, SOURCES } from '../data'
 
-const OPTIONS = ALL_KINDS.map((k) => ({ value: `${k.role}:${k.kind.id}`, label: k.kind.label, group: k.roleLabel }))
+const OPTIONS = ROLE_LIST.map((r) => ({ value: r.id, label: r.label, hint: r.tagline }))
 
 const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
@@ -18,13 +18,11 @@ export default function Landing() {
   const nav = useNavigate()
   const { session, guest } = useAuth()
   const report = useReport()
-  const [pick, setPick] = useState('company:first')
-  const [roleId, kindId] = pick.split(':') as [RoleId, string]
+  const [roleId, setRoleId] = useState<RoleId>('company')
   const role = ROLES[roleId]
-  const kind = role.kinds.find((k) => k.id === kindId) ?? role.kinds[0]
 
   const choose = (r: RoleId) => {
-    setPick(`${r}:${ROLES[r].kinds[0].id}`)
+    setRoleId(r)
     go('top')
   }
 
@@ -53,20 +51,20 @@ export default function Landing() {
             <motion.div className="card login" style={{ marginTop: 28 }} initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.15, duration: 0.5 }}>
               <h2 style={{ fontSize: 24 }}>Sign in to continue</h2>
               <div style={{ marginTop: 14 }}>
-                <Select label="I am a" placeholder="Choose who you are" value={[pick]} onChange={(v) => v[0] && setPick(v[0])} options={OPTIONS} />
+                <Select label="I am a" placeholder="Choose your role" value={[roleId]} onChange={(v) => v[0] && setRoleId(v[0] as RoleId)} options={OPTIONS} />
               </div>
-              <motion.div key={pick} className="roleinfo" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
-                <b>{kind.label}</b>
-                <p>{kind.desc} {role.goal}</p>
+              <motion.div key={roleId} className="roleinfo" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+                <b>{role.label}</b>
+                <p>{role.goal}</p>
               </motion.div>
               {session ? (
                 <button className="btn" style={{ width: '100%', marginTop: 18 }} onClick={() => nav(nextStep(session))}>Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} /></button>
               ) : (
-                <button className="btn" style={{ width: '100%', marginTop: 18 }} onClick={() => nav(`/auth?role=${roleId}&kind=${kindId}`)}>Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} /></button>
+                <button className="btn" style={{ width: '100%', marginTop: 18 }} onClick={() => nav(`/auth?role=${roleId}`)}>Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} /></button>
               )}
               {!session && (
                 <div style={{ textAlign: 'center', marginTop: 12 }}>
-                  <button className="linkbtn" onClick={() => { guest(roleId, kindId); nav('/app') }}>Preview this portal without signing in</button>
+                  <button className="linkbtn" onClick={() => { guest(roleId); nav('/app') }}>Preview this portal without signing in</button>
                 </div>
               )}
             </motion.div>

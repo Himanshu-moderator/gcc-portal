@@ -4,6 +4,7 @@ import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
 import PolicyCard from '../../PolicyCard'
+import { ConnectButton } from '../../Connect'
 import { CITIES, HEADLINES, LEVER_KEYS, POLICIES, SAMPLE_SCOUTS, SOURCES } from '../../data'
 
 function Desk({ p }: { p: Profile }) {
@@ -83,12 +84,13 @@ function Scouting() {
     <Card>
       <Title sample>Companies scouting for a state</Title>
       <table className="table">
-        <thead><tr><th>Company</th><th>From</th><th>States on shortlist</th><th>Interest</th></tr></thead>
+        <thead><tr><th>Company</th><th>From</th><th>States on shortlist</th><th>Interest</th><th></th></tr></thead>
         <tbody>
           {SAMPLE_SCOUTS.map((s, i) => (
             <motion.tr key={s.company} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
               <td><b>{s.company}</b></td><td className="muted">{s.from}</td>
               <td>{s.shortlist.map((x) => <span key={x} className="chip" style={{ marginRight: 6 }}>{x}</span>)}</td><td>{s.interest}</td>
+              <td><ConnectButton party={{ name: s.company, detail: `${s.from}, ${s.interest}` }} /></td>
             </motion.tr>
           ))}
         </tbody>

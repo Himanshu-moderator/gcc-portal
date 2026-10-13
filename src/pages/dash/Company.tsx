@@ -6,6 +6,7 @@ import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
 import LaunchpadPlan from './LaunchpadPlan'
 import PolicyCard from '../../PolicyCard'
+import { ConnectButton } from '../../Connect'
 import RentPulse from '../../RentPulse'
 import { CITIES, HEADLINES, INDICATIVE, POLICIES, SAMPLE_PROVIDERS, SOURCES } from '../../data'
 
@@ -77,7 +78,7 @@ function Providers() {
       <Title sample>Providers you can compare</Title>
       <p className="muted" style={{ fontSize: 14, marginBottom: 10 }}>Every provider here is verified through the same two-step check. "Delivered" counts completed GCC set-ups reported by the provider and confirmed by the client.</p>
       <table className="table">
-        <thead><tr><th>Provider</th><th>Service</th><th>Delivered</th><th>Rating</th><th>Cities</th></tr></thead>
+        <thead><tr><th>Provider</th><th>Service</th><th>Delivered</th><th>Rating</th><th>Cities</th><th></th></tr></thead>
         <tbody>
           {SAMPLE_PROVIDERS.map((p) => (
             <tr key={p.name}>
@@ -85,6 +86,7 @@ function Providers() {
               <td>{p.kind}</td><td>{p.delivered}</td>
               <td><Star size={13} style={{ verticalAlign: -2, color: 'var(--warn)' }} /> {p.rating}</td>
               <td className="muted">{p.cities.join(', ')}</td>
+              <td><ConnectButton party={{ name: p.name, detail: `${p.kind}, ${p.cities.join(', ')}` }} /></td>
             </tr>
           ))}
         </tbody>

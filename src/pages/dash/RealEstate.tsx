@@ -5,6 +5,7 @@ import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
 import RentPulse from '../../RentPulse'
+import { ConnectButton } from '../../Connect'
 import { CITY_POS, INDIA_PATH, INDIA_VIEWBOX } from '../../indiaMap'
 import { CITIES, HEADLINES, SAMPLE_ENQUIRIES, SOURCES } from '../../data'
 
@@ -74,11 +75,12 @@ function Demand() {
     <Card>
       <Title sample>Companies looking for space</Title>
       <table className="table">
-        <thead><tr><th>Company</th><th>City</th><th>Seats</th><th>Timeline</th><th>Looking for</th></tr></thead>
+        <thead><tr><th>Company</th><th>City</th><th>Seats</th><th>Timeline</th><th>Looking for</th><th></th></tr></thead>
         <tbody>
           {SAMPLE_ENQUIRIES.map((e, i) => (
             <motion.tr key={e.company} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
               <td><b>{e.company}</b></td><td>{e.city}</td><td>{e.seats}</td><td>{e.timeline}</td><td>{e.type}</td>
+              <td><ConnectButton party={{ name: e.company, detail: `${e.seats} seats in ${e.city}` }} /></td>
             </motion.tr>
           ))}
         </tbody>

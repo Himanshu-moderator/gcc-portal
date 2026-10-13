@@ -14,6 +14,7 @@ import { companyViews } from './dash/Company'
 import { consultantViews } from './dash/Consultant'
 import { realestateViews } from './dash/RealEstate'
 import { governmentViews } from './dash/Government'
+import { connectionsView } from './dash/Connections'
 
 export interface View {
   id: string
@@ -41,7 +42,7 @@ export default function Dashboard() {
   if (nextStep(session) !== '/app') return <Navigate to={nextStep(session)} replace />
 
   const role = ROLES[session.profile.role]
-  const views = VIEWS[role.id]
+  const views = [...VIEWS[role.id], connectionsView]
   const view = views[tab]
   const ob = session.profile.onboarding ?? {}
   const focus = [...(ob.state ?? []), ...(ob.cities ?? []), ...(ob.track ?? [])].slice(0, 6)
