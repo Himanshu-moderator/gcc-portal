@@ -117,7 +117,7 @@ export default function Select({ label, placeholder, options, value, onChange, m
                 style={{ left: place.left, width: place.width, top: place.top, bottom: place.bottom, maxHeight: place.maxHeight }}
                 initial={{ opacity: 0, y: -6, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -6 }}
+                exit={{ opacity: 0, y: -6, pointerEvents: 'none' }}
                 transition={{ duration: 0.15 }}
               >
                 {opts.map((o, idx) => {
