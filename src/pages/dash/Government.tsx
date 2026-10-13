@@ -3,6 +3,7 @@ import { Eye, Landmark, Scale, Target } from 'lucide-react'
 import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
+import PolicyCard from '../../PolicyCard'
 import { CITIES, HEADLINES, LEVER_KEYS, POLICIES, SAMPLE_SCOUTS, SOURCES } from '../../data'
 
 function Desk({ p }: { p: Profile }) {
@@ -19,19 +20,14 @@ function Desk({ p }: { p: Profile }) {
         <Kpi value={HEADLINES.stateGccs} label="new GCCs all states target by 2031" note="CBRE" />
       </div>
       <div className="grid2" style={{ alignItems: 'start' }}>
-        <Card>
-          <Title>Your policy today</Title>
-          {policy ? (
-            <>
-              <div className="chip on" style={{ marginTop: 8 }}>{policy.policy}</div>
-              <div style={{ marginTop: 12, fontWeight: 600 }}>{policy.target}</div>
-              <p className="muted" style={{ marginTop: 8, fontSize: 14, lineHeight: 1.55 }}>{policy.note}</p>
-            </>
-          ) : (
+        {policy ? (
+          <PolicyCard p={policy} defaultOpen />
+        ) : (
+          <Card>
+            <Title>Your policy today</Title>
             <p className="muted" style={{ marginTop: 8 }}>No GCC policy details for this state were found in the sources reviewed.</p>
-          )}
-          <Sources items={[SOURCES.aim, SOURCES.cbreStates]} />
-        </Card>
+          </Card>
+        )}
         <Card>
           <Title>Levers other states use that you do not</Title>
           {missing.length === 0 ? <p className="muted" style={{ marginTop: 8 }}>No gaps found in the sources reviewed.</p> : (
@@ -46,6 +42,7 @@ function Desk({ p }: { p: Profile }) {
 
 function Benchmark() {
   return (
+    <div className="stack">
     <Card>
       <Title>Incentive levers by state</Title>
       <table className="table matrix">
@@ -62,6 +59,9 @@ function Benchmark() {
       <p className="src">A dash means the lever was not found in the sources reviewed, not that it does not exist. Gujarat and Andhra Pradesh have dedicated policies whose terms were not found.</p>
       <Sources items={[SOURCES.aim, SOURCES.cbreStates]} />
     </Card>
+    <h3 style={{ fontSize: 17, marginTop: 8 }}>Each state, in detail</h3>
+    {POLICIES.map((p) => <PolicyCard key={p.state} p={p} />)}
+    </div>
   )
 }
 

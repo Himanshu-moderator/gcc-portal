@@ -4,12 +4,12 @@ import { BarChart3, Calculator, Inbox, MapPinned } from 'lucide-react'
 import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
+import RentPulse from '../../RentPulse'
+import { CITY_POS, INDIA_PATH, INDIA_VIEWBOX } from '../../indiaMap'
 import { CITIES, HEADLINES, SAMPLE_ENQUIRIES, SOURCES } from '../../data'
 
-// Rough positions on a schematic of India (percent of the map box).
-const POS: Record<string, [number, number]> = {
-  'Delhi-NCR': [46, 14], Mumbai: [16, 44], Pune: [31, 66], Hyderabad: [54, 50], Bengaluru: [42, 84], Chennai: [72, 78],
-}
+// Nudge two bubbles that would otherwise sit on top of each other (Mumbai and Pune are about 120 km apart).
+const NUDGE: Record<string, [number, number]> = { Pune: [3, 2.5], Mumbai: [-2, -1], Chennai: [3.5, 0] }
 
 function ClusterMap({ p }: { p: Profile }) {
   const mine = p.onboarding?.cities ?? []
@@ -17,34 +17,49 @@ function ClusterMap({ p }: { p: Profile }) {
   const city = CITIES.find((c) => c.name === sel) ?? CITIES[0]
   const maxG = Math.max(...CITIES.map((c) => c.gccs))
   return (
-    <div className="grid2" style={{ gridTemplateColumns: '1.3fr 1fr', alignItems: 'start' }}>
+    <div className="grid2" style={{ gridTemplateColumns: '1.1fr 1fr', alignItems: 'start' }}>
       <Card>
         <Title>Where GCCs cluster</Title>
-        <p className="muted" style={{ fontSize: 13, marginBottom: 10 }}>Bubble size is the number of GCCs (Vestian). Schematic map, not to scale.</p>
-        <div className="mapwrap">
-          {CITIES.map((c) => {
-            const [x, y] = POS[c.name]
-            const s = 34 + (c.gccs / maxG) * 34
+        <p className="muted" style={{ fontSize: 13, marginBottom: 10 }}>Tap a circle. Size shows the number of GCCs (Vestian).</p>
+        <div className="indiamap" style={{ aspectRatio: `${INDIA_VIEWBOX.w} / ${INDIA_VIEWBOX.h}` }}>
+          <svg viewBox={`0 0 ${INDIA_VIEWBOX.w} ${INDIA_VIEWBOX.h}`} role="img" aria-label="Outline of India">
+            <motion.path className="land" d={INDIA_PATH} initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.6, ease: 'easeInOut' }} />
+          </svg>
+          {CITIES.map((c, i) => {
+            const [x0, y0] = CITY_POS[c.name]
+            const [dx, dy] = NUDGE[c.name] ?? [0, 0]
+            const x = x0 + dx
+            const y = y0 + dy
+            const s = 28 + (c.gccs / maxG) * 26
             return (
-              <button key={c.name} className={`pin ${sel === c.name ? 'on' : ''}`} style={{ left: `${x}%`, top: `${y}%`, width: s, height: s, fontSize: 12 }} onClick={() => setSel(c.name)} aria-label={c.name}>
-                {c.gccs}
-              </button>
+              <div key={c.name}>
+                <motion.button
+                  className={`cpin ${sel === c.name ? 'on' : ''}`}
+                  style={{ left: `${x}%`, top: `${y}%`, width: s, height: s, x: '-50%', y: '-50%' }}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 13, delay: 0.9 + i * 0.13 }}
+                  whileHover={{ scale: 1.15 }}
+                  onClick={() => setSel(c.name)}
+                  aria-label={`${c.name}: ${c.gccs} GCCs`}
+                >
+                  {c.gccs}
+                </motion.button>
+                <span className="clabel" style={{ left: `${x}%`, top: `calc(${y}% + ${s / 2 + 3}px)` }}>{c.name}{mine.includes(c.name) ? ' ★' : ''}</span>
+              </div>
             )
-          })}
-          {CITIES.map((c) => {
-            const [x, y] = POS[c.name]
-            return <span key={c.name + 'l'} style={{ position: 'absolute', left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, 34px)', fontSize: 12, color: 'var(--muted)', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{c.name}{mine.includes(c.name) ? ' ★' : ''}</span>
           })}
         </div>
         <Sources items={[SOURCES.vestian]} />
+        <p className="src">Outline: Natural Earth (public domain), India point-of-view boundary. Not a survey map.</p>
       </Card>
       <motion.div key={city.name} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
         <Card>
           <h3 style={{ fontSize: 22 }}>{city.name}</h3>
           <div className="muted" style={{ fontSize: 13 }}>{city.state}</div>
           <div className="grid2" style={{ marginTop: 16 }}>
-            <div><div className="kpi"><div className="v">{city.gccs}</div><div className="l">GCCs (Vestian)</div></div></div>
-            <div><div className="kpi"><div className="v">{city.leasingH1 ?? 'n/a'}</div><div className="l">{city.leasingH1 ? 'mn sq ft leased by GCCs, H1 2025' : 'H1 2025 leasing not found'}</div></div></div>
+            <div className="kpi"><div className="v">{city.gccs}</div><div className="l">GCCs (Vestian)</div></div>
+            <div className="kpi"><div className="v">{city.leasingH1 ?? 'n/a'}</div><div className="l">{city.leasingH1 ? 'mn sq ft leased by GCCs, H1 2025' : 'H1 2025 leasing not found'}</div></div>
           </div>
           {city.zinnov && <p className="src">Zinnov reports {city.zinnov} GCCs here, so treat the count as a range.</p>}
           <Sources items={[SOURCES.anarock]} />
@@ -78,6 +93,7 @@ function Leasing() {
   const max = Math.max(...rows.map((c) => c.leasingH1 ?? 0))
   return (
     <div className="stack">
+      <RentPulse />
       <div className="grid3">
         <Kpi value={`₹${HEADLINES.avgRent}`} label="national average rent, per sq ft per month" note="ANAROCK H1 2025" />
         <Kpi value={HEADLINES.gccLeasingShare} label="GCC share of gross leasing, 2023-24" note="Top 7 cities, ANAROCK" />
@@ -104,6 +120,8 @@ function Sizer() {
   const [seats, setSeats] = useState(300)
   const sqft = seats * 100
   return (
+    <>
+    <RentPulse />
     <div className="grid2" style={{ alignItems: 'start' }}>
       <Card>
         <Title>Seats</Title>
@@ -117,5 +135,6 @@ function Sizer() {
         <Sources items={[SOURCES.anarock]} />
       </Card>
     </div>
+    </>
   )
 }

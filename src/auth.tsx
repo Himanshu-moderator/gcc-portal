@@ -18,6 +18,7 @@ export interface Profile {
   orgProof?: string
   personProof?: string
   onboarding?: Record<string, string[]>
+  plan?: Record<string, string[]>
 }
 
 export interface Session {
@@ -75,6 +76,7 @@ function toProfile(meta: Record<string, unknown> | undefined): Profile | null {
     orgProof: typeof meta.orgProof === 'string' ? meta.orgProof : undefined,
     personProof: typeof meta.personProof === 'string' ? meta.personProof : undefined,
     onboarding: (meta.onboarding as Record<string, string[]> | undefined) ?? undefined,
+    plan: (meta.plan as Record<string, string[]> | undefined) ?? undefined,
   }
 }
 

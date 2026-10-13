@@ -39,12 +39,21 @@ export const HEADLINES = {
   gccLeasingShare: '37%', // of gross office leasing over 2023-24, top 7 cities
 }
 
+export interface Link {
+  label: string
+  url: string
+}
+
 export interface Policy {
   state: string
   policy: string
   target: string
   levers: string[]
   note: string
+  dated: string // when the policy was issued or last reported on
+  points: string[] // key incentives and features, as reported
+  links: Link[] // official page first where we found one, then reputable summaries
+  official: boolean // true only if one of the links is the state's own page
 }
 
 // "levers" use these keys so the matrix can compare states.
@@ -54,45 +63,139 @@ export const POLICIES: Policy[] = [
   {
     state: 'Karnataka',
     policy: 'GCC Policy 2024-29',
-    target: '500 new GCCs, 350,000 jobs by 2029',
+    target: '500 new GCCs (1,000 in total), 350,000 jobs by 2029',
     levers: ['Rent / land', 'Payroll / EPF', 'R&D grant'],
-    note: 'Outside Bengaluru: 50% rent reimbursement (up to ₹2 crore), R&D grant of 40% or up to ₹50 crore, ₹3,000 per employee EPF reimbursement for two years, 25% internet cost reimbursement for three years.',
+    note: 'Final policy released on 19 November 2024 at the Bengaluru Tech Summit, after a September draft.',
+    dated: 'Released 19 Nov 2024',
+    points: [
+      'Targets 500 new GCCs, about 350,000 jobs and US$50 billion of economic output by 2029',
+      'Reimburses 50% of internship stipends, for up to 100,000 students',
+      'Five-year electricity duty exemption; GCCs outside Bengaluru can move to industrial tariffs',
+      'Property tax reimbursement, and customised packages for very large projects',
+      'Outside Bengaluru: rent reimbursement, R&D grants and EPF reimbursement are reported',
+      'Three global innovation districts planned: Bengaluru, Mysuru and Belagavi',
+    ],
+    links: [
+      { label: 'Khaitan & Co: final policy launched', url: 'https://khaitanco.com/thought-leadership/Karnatakas-Final-GCC-Policy-Launched' },
+      { label: 'India Briefing: key features', url: 'https://india-briefing.com/news/karnataka-global-capability-center-policy-2024-2029-key-features-35441.html' },
+      { label: 'CBRE: policy analysis', url: 'https://www.cbre.com/insights/articles/karnataka-gcc-policy-2024-29-pioneering-growth-through-innovation-and-regional-development' },
+    ],
+    official: false,
   },
   {
     state: 'Maharashtra',
     policy: 'GCC Policy 2025',
-    target: '400 new GCCs, 400,000 jobs',
+    target: '400 new GCCs, 4 lakh jobs, ₹50,600 crore investment',
     levers: ['Capital subsidy', 'Payroll / EPF', 'R&D grant', 'Single window'],
-    note: 'Capital subsidies, payroll assistance, R&D grants and interest subsidies. GCC parks planned across Mumbai, Pune, Nagpur and Nashik, with a GCC facilitation cell.',
+    note: 'Approved by the state cabinet on 30 September 2025. In effect until the end of FY 2029-30 or until replaced.',
+    dated: 'Cabinet approval 30 Sep 2025',
+    points: [
+      'Aims for about 400 GCCs and 4 lakh jobs between 2025 and 2030',
+      'Capital subsidy linked to fixed capital investment',
+      'Payroll reimbursement for high-skilled staff, plus rental and power tariff assistance',
+      'R&D and patent-linked support, and interest subsidy for eligible Tier-2 projects',
+      'Industry status for GCCs, extra floor space index, zoning relaxations and single-window clearance',
+      'Focus on Tier-2 and Tier-3 cities such as Nashik, Nagpur and Chhatrapati Sambhajinagar',
+    ],
+    links: [
+      { label: 'PTI via The Week: cabinet approval', url: 'https://www.theweek.in/wire-updates/national/2025/09/30/bes21-mh-cab-gcc-policy.html' },
+      { label: 'Cyril Amarchand Mangaldas: policy summary', url: 'https://corporate.cyrilamarchandblogs.com/2025/10/maharashtra-pushes-toward-claiming-a-bigger-piece-of-the-gcc-pie-mh-gcc-policy-2025/' },
+      { label: 'RSM India: highlights and incentives', url: 'https://www.rsm.global/india/node/867' },
+    ],
+    official: false,
   },
   {
     state: 'Tamil Nadu',
-    policy: 'No standalone GCC policy',
-    target: 'Part of its wider R&D ecosystem',
-    levers: ['Rent / land', 'Skilling'],
-    note: 'Land cost incentive up to 50% (up to 8 hectares), reimbursement for IP filings and certifications, electricity tax exemption and training stipends.',
+    policy: 'Special Scheme to Promote GCCs',
+    target: 'No numeric target found; MoUs point to 10,000+ GCC jobs',
+    levers: ['Rent / land', 'Skilling', 'Single window'],
+    note: 'Sources disagree on whether this is a full policy. The scheme was introduced on 12 March 2024 under the Industries Department.',
+    dated: 'Scheme March 2024, GCC One 2025',
+    points: [
+      'Land cost incentive of up to 50% (up to 8 hectares)',
+      'Reimbursement for IP filings and certifications, electricity tax exemption and training stipends',
+      'GCC One: a single-window clearance system and a dedicated desk at Guidance Tamil Nadu (2025)',
+      'Four new GCC hubs announced for Coimbatore, Madurai, Tiruchirappalli and Vellore (Aug 2025)',
+      'Guidance signed an MoU with ANSR in Nov 2025, expected to create over 10,000 jobs',
+    ],
+    links: [
+      { label: 'Guidance Tamil Nadu: policy support (official)', url: 'https://www.investingintamilnadu.com/innovation-dna/policy-support-ease-of-business' },
+      { label: 'Cyril Amarchand Mangaldas: Tamil Nadu 2030', url: 'https://corporate.cyrilamarchandblogs.com/2025/11/tamil-nadu-2030-the-gcc-revolution-powering-the-usd-1-trillion-economy-dream/' },
+    ],
+    official: true,
   },
   {
     state: 'Telangana',
-    policy: 'Policy framework, no dedicated GCC policy',
-    target: 'Not stated in sources reviewed',
+    policy: 'No confirmed dedicated GCC policy',
+    target: 'About 120 new GCCs by 2026 (reported)',
     levers: ['Skilling'],
-    note: 'Skilling through TASK (Telangana Academy for Skill and Knowledge). Specific incentive terms were not found in the sources reviewed.',
+    note: 'Sources conflict: some list Telangana among states with dedicated GCC policies, others say a policy is still being drafted. Verify before relying on it.',
+    dated: 'Status unclear',
+    points: [
+      'Hyderabad is one of the largest GCC hubs in India',
+      'Reported support: land subsidies, electricity benefits and employment-linked support',
+      'Skilling through TASK (Telangana Academy for Skill and Knowledge)',
+      'Exact incentive terms and the policy name were not confirmed in the sources reviewed',
+    ],
+    links: [
+      { label: 'NASSCOM community: how states compete for GCCs', url: 'https://community.nasscom.in/communities/global-capability-centers/beyond-borders-how-indian-states-are-competing-gccs' },
+      { label: 'law.asia: states race to become GCC powerhouses', url: 'https://law.asia/india-gcc-growth/' },
+    ],
+    official: false,
   },
   {
     state: 'Gujarat',
-    policy: 'Dedicated GCC policy',
-    target: '250+ new GCCs, 50,000+ jobs by 2030',
-    levers: [],
-    note: 'Dedicated policy per CBRE. Incentive terms were not found in the sources reviewed.',
+    policy: 'GCC Policy 2025-30',
+    target: '₹10,000 crore investment and about 50,000 jobs over five years',
+    levers: ['Capital subsidy', 'Payroll / EPF', 'Single window'],
+    note: 'Launched on 11 February 2025 by the Chief Minister at GIFT City. Reported figures vary between summaries, so check the official document.',
+    dated: 'Launched 11 Feb 2025',
+    points: [
+      'Capital support reported at 20% for non-IT infrastructure and 30% for IT infrastructure',
+      'One-time employment-linked incentive, reported at up to ₹60,000 per employee (amount differs by source)',
+      'EPF support for five years; 7% interest assistance on term loans',
+      'Electricity duty exemption for five years (reported)',
+      'IT, finance and HR named as priority sectors; GIFT City is a key location',
+    ],
+    links: [
+      { label: 'Government of Gujarat: GCC page (official)', url: 'https://dst.gujarat.gov.in/Home/GujaratGlobalCapabilityCenter' },
+      { label: 'Rödl & Partner: Gujarat unveils its GCC policy', url: 'https://www.roedl.com/insights/india-global-capability-centers-gujarat-unveils-gcc-policy' },
+      { label: 'India TV: policy launch', url: 'https://www.indiatvnews.com/gujarat/gujarat-cm-bhupendra-patel-launches-new-policy-to-promote-global-capability-centres-2025-02-11-975759' },
+    ],
+    official: true,
   },
   {
     state: 'Andhra Pradesh',
-    policy: 'Dedicated GCC policy',
-    target: 'Not stated in sources reviewed',
-    levers: [],
-    note: 'Dedicated policy per CBRE. Incentive terms were not found in the sources reviewed.',
+    policy: 'IT & GCC Policy 4.0 (2024-29)',
+    target: 'Not stated in the sources reviewed',
+    levers: ['Rent / land', 'Capital subsidy'],
+    note: 'Issued on 12 December 2024 and valid for five years or until a new policy replaces it. Operating guidelines followed.',
+    dated: 'Issued 12 Dec 2024',
+    points: [
+      'Three models with separate incentives: co-working space developers, neighbourhood workspace developers, and IT campus developers',
+      'Model 3 is aimed at large, Fortune 500-level campus investments',
+      'Covers infrastructure development, financial incentives and talent programmes',
+      'Amendments apply only going forward and do not affect benefits already granted',
+    ],
+    links: [
+      { label: 'Khaitan & Co: AP IT and GCC policy', url: 'https://khaitanco.com/thought-leadership/Impetus-to-GCCs-in-India-Andhra-Pradesh-Releases-its-IT-and-GCC-Policy' },
+      { label: 'Rödl & Partner: AP IT & GCC policy 2024-29', url: 'https://www.roedl.com/insights/india-it-global-capability-centers-policy' },
+    ],
+    official: false,
   },
+]
+
+// Benchmarks that update on a schedule. None is a live feed; each opens its source.
+export interface Pulse {
+  label: string
+  value: string
+  note: string
+  url: string
+}
+export const RENT_PULSE: Pulse[] = [
+  { label: 'Grade A office rents, all-India', value: '+3.8% year on year', note: 'IIMB-CRE Matrix rent index, Q2 2025 (quarterly)', url: 'https://www.iimb.ac.in/sites/default/files/inline-files/CPRI_2025.pdf' },
+  { label: 'Average office rent', value: '₹88 per sq ft per month', note: 'ANAROCK, H1 2025 (national average)', url: 'https://www.dtnext.in/news/business/indias-office-leasing-surges-40-pc-in-jan-june-driven-by-tech-gcc-expansion-844243' },
+  { label: 'GCC share of office leasing', value: '37% of gross leasing', note: 'ANAROCK, 2023-24 (top 7 cities)', url: 'https://realtynmore.com/gccs-share-37-of-gross-office-leasing-in-last-2-years-bengaluru-tops-with-24-msf/' },
 ]
 
 // ---------- SAMPLE DATA (invented for the demo) ----------

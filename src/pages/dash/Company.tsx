@@ -4,47 +4,22 @@ import { BadgeCheck, Building2, Calculator, Compass, Map, ShieldCheck, Star } fr
 import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
+import LaunchpadPlan from './LaunchpadPlan'
+import PolicyCard from '../../PolicyCard'
+import RentPulse from '../../RentPulse'
 import { CITIES, HEADLINES, INDICATIVE, POLICIES, SAMPLE_PROVIDERS, SOURCES } from '../../data'
 
-const STAGES = ['Choose city', 'Pick advisors', 'Set up entity', 'Find office', 'Hire first team']
 
 function Launchpad({ p }: { p: Profile }) {
-  const short = p.onboarding?.cities?.length ? p.onboarding.cities : ['Bengaluru', 'Hyderabad', 'Pune']
   const size = p.onboarding?.size?.[0] ?? '50 to 200'
-  const now = 0
   return (
     <div className="stack">
-      <Card>
-        <Title>Your journey</Title>
-        <div className="journey" style={{ margin: '22px 0 8px' }}>
-          {STAGES.map((s, i) => (
-            <div key={s} className={`node ${i < now ? 'done' : ''} ${i === now ? 'now' : ''}`}>
-              <div className="dot">{i + 1}</div>{s}
-            </div>
-          ))}
-        </div>
-        <p className="muted" style={{ fontSize: 14 }}>Next: compare your shortlisted cities in <b style={{ color: 'var(--text)' }}>City Finder</b>.</p>
-      </Card>
+      <LaunchpadPlan p={p} />
       <div className="grid3">
-        <Kpi value={`${CITIES.length}`} label="cities tracked" />
-        <Kpi value={size} label="planned first-year headcount" />
+        <Kpi value={size} label="planned first-year team" />
+        <Kpi value={`${(p.onboarding?.cities?.length ?? CITIES.length)}`} label="cities on your list" />
         <Kpi value={`~${HEADLINES.totalVestian.toLocaleString()}`} label="GCCs already in India" note={`Vestian, Jul 2025. NASSCOM counts ${HEADLINES.nasscomUnits} units.`} />
       </div>
-      <Card>
-        <Title>Your shortlist</Title>
-        <div className="grid3" style={{ marginTop: 10 }}>
-          {short.map((c) => {
-            const city = CITIES.find((x) => x.name === c)
-            return (
-              <Card key={c} hover>
-                <b>{c}</b>
-                <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{city ? `${city.gccs} GCCs · ${city.state}` : ''}</div>
-              </Card>
-            )
-          })}
-        </div>
-        <Sources items={[SOURCES.vestian]} />
-      </Card>
     </div>
   )
 }
@@ -90,20 +65,8 @@ function CityFinder({ p }: { p: Profile }) {
 function Incentives() {
   return (
     <div className="stack">
-      {POLICIES.map((p, i) => (
-        <motion.div key={p.state} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-          <Card hover>
-            <div className="row" style={{ justifyContent: 'space-between' }}>
-              <h3 style={{ fontSize: 18 }}>{p.state}</h3>
-              <span className="chip">{p.policy}</span>
-            </div>
-            <div style={{ marginTop: 8, fontWeight: 600 }}>{p.target}</div>
-            <p className="muted" style={{ marginTop: 6, fontSize: 14, lineHeight: 1.55 }}>{p.note}</p>
-          </Card>
-        </motion.div>
-      ))}
-      <Sources items={[SOURCES.aim, SOURCES.cbreStates]} />
-      <p className="src">Check each state's official notification before relying on amounts or eligibility.</p>
+      {POLICIES.map((p) => <PolicyCard key={p.state} p={p} />)}
+      <p className="src">Tap a state for the key points and sources. Where a state publishes an official page we link it; otherwise the summaries come from law-firm and press coverage.</p>
     </div>
   )
 }
@@ -136,6 +99,8 @@ function Cost() {
   const [sqft, setSqft] = useState(100)
   const monthly = seats * sqft * HEADLINES.avgRent
   return (
+    <>
+    <RentPulse />
     <div className="grid2" style={{ alignItems: 'start' }}>
       <Card>
         <Title>Office rent estimate</Title>
@@ -152,6 +117,7 @@ function Cost() {
         <Sources items={[SOURCES.anarock]} />
       </Card>
     </div>
+    </>
   )
 }
 

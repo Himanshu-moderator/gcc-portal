@@ -4,6 +4,7 @@ import { Crosshair, Gavel, Radar, TrendingUp } from 'lucide-react'
 import type { View } from '../Dashboard'
 import type { Profile } from '../../auth'
 import { Bar, Card, Kpi, Sources, Title } from '../../ui'
+import PolicyCard from '../../PolicyCard'
 import { CITIES, HEADLINES, POLICIES, SAMPLE_ENTRANTS, SAMPLE_PROVIDERS, SOURCES } from '../../data'
 
 function Pipeline({ p }: { p: Profile }) {
@@ -90,15 +91,8 @@ function League() {
 function Watch() {
   return (
     <div className="stack">
-      {POLICIES.map((p, i) => (
-        <motion.div key={p.state} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}>
-          <Card hover>
-            <div className="row" style={{ justifyContent: 'space-between' }}><b>{p.state}</b><span className="chip">{p.policy}</span></div>
-            <div className="muted" style={{ marginTop: 6, fontSize: 14 }}>{p.target}</div>
-          </Card>
-        </motion.div>
-      ))}
-      <Sources items={[SOURCES.aim, SOURCES.cbreStates]} />
+      {POLICIES.map((p) => <PolicyCard key={p.state} p={p} />)}
+      <p className="src">Tap a state for what changed and where to read more.</p>
     </div>
   )
 }
