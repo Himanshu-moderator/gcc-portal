@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Briefcase, Building, Landmark, Rocket } from 'lucide-react'
 import type { RoleId } from './roles'
+import { useReport } from './Report'
 
 export const ROLE_ICON: Record<RoleId, typeof Rocket> = {
   company: Rocket,
@@ -81,6 +82,7 @@ export function Bar({ value, max, label, right }: { value: number; max: number; 
 }
 
 export function Sources({ items }: { items: { label: string; url: string }[] }) {
+  const report = useReport()
   return (
     <div className="src">
       Sources:{' '}
@@ -92,6 +94,8 @@ export function Sources({ items }: { items: { label: string; url: string }[] }) 
           </a>
         </span>
       ))}
+      {' · '}
+      <button className="linkbtn" style={{ fontSize: 12, padding: 0 }} onClick={() => report.open({ link: items[0]?.url ?? window.location.href })}>Report an issue</button>
     </div>
   )
 }

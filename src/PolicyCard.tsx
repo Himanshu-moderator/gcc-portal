@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ExternalLink } from 'lucide-react'
 import type { Policy } from './data'
+import { useReport } from './Report'
 
 export default function PolicyCard({ p, defaultOpen = false }: { p: Policy; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen)
+  const report = useReport()
   return (
     <div className={`card policy ${open ? 'open' : ''}`}>
       <button className="policy-head" onClick={() => setOpen(!open)} aria-expanded={open}>
@@ -36,7 +38,7 @@ export default function PolicyCard({ p, defaultOpen = false }: { p: Policy; defa
                   <a key={l.url} href={l.url} target="_blank" rel="noreferrer">{l.label} <ExternalLink size={13} /></a>
                 ))}
               </div>
-              <p className="src">Summaries are drawn from the sources above. Confirm amounts and eligibility on the official notification before relying on them.</p>
+              <p className="src">Summaries are drawn from the sources above. Confirm amounts and eligibility on the official notification before relying on them. <button className="linkbtn" style={{ fontSize: 12, padding: 0 }} onClick={() => report.open({ link: p.links[0]?.url, note: `About the ${p.state} policy: ` })}>Report an issue</button></p>
             </div>
           </motion.div>
         )}

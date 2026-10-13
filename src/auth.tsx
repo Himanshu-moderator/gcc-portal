@@ -38,11 +38,11 @@ const LOCAL_SESSION = 'gcc.session'
 interface Ctx {
   session: Session | null
   loading: boolean
-  signUp: (a: { email: string; password: string; name: string; org: string; role: RoleId }) => Promise<string | null>
+  signUp: (a: { email: string; password: string; name: string; org: string; role: RoleId; kind?: string }) => Promise<string | null>
   signIn: (email: string, password: string) => Promise<string | null>
   signOut: () => Promise<void>
   update: (patch: Partial<Profile>) => Promise<void>
-  guest: (role: RoleId) => void
+  guest: (role: RoleId, kind?: string) => void
 }
 
 const AuthContext = createContext<Ctx | null>(null)
@@ -111,8 +111,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const signUp: Ctx['signUp'] = useCallback(async ({ email, password, name, org, role }) => {
-    const profile: Profile = { role, name, org, docVerified: false }
+  const signUp: Ctx['signUp'] = useCallback(async ({ email, password, name, org, role, kind }) => {
+    const profile: Profile = { role, name, org, kind, docVerified: false }
     if (supabase) {
       const { data, error } = await supabase.auth.signUp({ email, password, options: { data: profile } })
       if (error) return error.message
@@ -172,11 +172,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [session],
   )
 
-  const guest: Ctx['guest'] = useCallback((role) => {
+  const guest: Ctx['guest'] = useCallback((role, kind) => {
     const s: Session = {
       email: 'guest@gccportal.demo',
       source: 'guest',
-      profile: { role, name: 'Guest', org: 'Demo organisation', kind: ROLES[role].kinds[0].id, docVerified: true, onboarding: {} },
+      profile: { role, name: 'Guest', org: 'Demo organisation', kind: kind ?? ROLES[role].kinds[0].id, docVerified: true, onboarding: {} },
     }
     write(LOCAL_SESSION, s)
     setSession(s)

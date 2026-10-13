@@ -1,6 +1,6 @@
 // A dropdown that follows the active role theme. Single or multiple choice.
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { Fragment, useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, ChevronDown } from 'lucide-react'
 
@@ -8,6 +8,7 @@ export interface Option {
   value: string
   label: string
   hint?: string
+  group?: string
 }
 
 interface Props {
@@ -63,16 +64,20 @@ export default function Select({ label, placeholder, options, value, onChange, m
       <AnimatePresence>
         {open && (
           <motion.ul className="sel-list" role="listbox" aria-multiselectable={multi} initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }}>
-            {opts.map((o) => {
+            {opts.map((o, idx) => {
               const on = value.includes(o.value)
+              const header = o.group && o.group !== opts[idx - 1]?.group
               return (
-                <li key={o.value} role="option" aria-selected={on} className={on ? 'on' : ''} onClick={() => pick(o.value)}>
+                <Fragment key={o.value}>
+                {header && <li role="presentation" className="sel-group">{o.group}</li>}
+                <li role="option" aria-selected={on} className={on ? 'on' : ''} onClick={() => pick(o.value)}>
                   <span>
                     {o.label}
                     {o.hint && <small>{o.hint}</small>}
                   </span>
                   {on && <Check size={16} />}
                 </li>
+                </Fragment>
               )
             })}
           </motion.ul>

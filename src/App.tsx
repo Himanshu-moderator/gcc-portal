@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth'
+import { ReportProvider } from './Report'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Verify from './pages/Verify'
@@ -24,9 +25,11 @@ function Routed() {
 export default function App() {
   return (
     <AuthProvider>
-      <HashRouter>
-        <Routed />
-      </HashRouter>
+      <ReportProvider>
+        <HashRouter>
+          <Routed />
+        </HashRouter>
+      </ReportProvider>
     </AuthProvider>
   )
 }

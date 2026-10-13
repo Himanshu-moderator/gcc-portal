@@ -2,13 +2,14 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BadgeCheck, LogOut, Radar } from 'lucide-react'
+import { BadgeCheck, Flag, LogOut, Radar } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { nextStep, useAuth } from '../auth'
 import type { Profile } from '../auth'
 import { ROLES } from '../roles'
 import type { RoleId } from '../roles'
 import { Background } from '../ui'
+import { useReport } from '../Report'
 import { companyViews } from './dash/Company'
 import { consultantViews } from './dash/Consultant'
 import { realestateViews } from './dash/RealEstate'
@@ -33,6 +34,7 @@ const VIEWS: Record<RoleId, View[]> = {
 export default function Dashboard() {
   const nav = useNavigate()
   const { session, signOut } = useAuth()
+  const report = useReport()
   const [tab, setTab] = useState(0)
 
   if (!session) return <Navigate to="/auth" replace />
@@ -63,6 +65,7 @@ export default function Dashboard() {
             <b style={{ color: 'var(--text)', display: 'block' }}>{session.profile.name || 'Guest'}</b>
             {session.profile.org}
           </div>
+          <button className="tab" onClick={() => report.open({ link: window.location.href, note: '' })}><Flag size={17} />Report a data issue</button>
           <button className="tab" onClick={() => signOut().then(() => nav('/'))}><LogOut size={17} />Sign out</button>
         </aside>
         <main className="main">

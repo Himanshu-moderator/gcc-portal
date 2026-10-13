@@ -240,3 +240,44 @@ button.chip:hover { border-color: var(--accent); color: var(--text); }
 .cpin { position: absolute; border: 0; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: #04100c; background: radial-gradient(circle at 35% 30%, #d1fae5, var(--accent)); cursor: pointer; animation: pulse 2.8s infinite; }
 .cpin.on { outline: 3px solid #fff; z-index: 3; }
 .clabel { position: absolute; font-size: 12px; color: var(--muted); pointer-events: none; white-space: nowrap; transform: translate(-50%, 0); }
+.sel-group { padding: 10px 12px 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); cursor: default; }
+.sel-group:hover { background: none !important; }
+
+/* ---------- modal, landing sections ---------- */
+.modal-bg { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); overflow: auto; }
+.modal { position: relative; width: 100%; max-width: 480px; padding: 28px; background: color-mix(in srgb, var(--bg2) 94%, #000); border-radius: 22px; max-height: 92vh; overflow: auto; }
+.modal-x { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: var(--surface2); color: var(--text); display: grid; place-items: center; }
+textarea.input { font-family: var(--font); }
+.topnav { position: fixed; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; backdrop-filter: blur(12px); background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 85%, transparent), transparent); }
+.topnav .links { display: flex; gap: 8px; align-items: center; }
+.topnav a, .topnav button.nl { color: var(--muted); font-size: 14px; text-decoration: none; background: none; border: 0; padding: 8px 12px; border-radius: 10px; transition: all 0.2s; }
+.topnav a:hover, .topnav button.nl:hover { color: var(--text); background: var(--surface); }
+.hero-screen { min-height: 100vh; display: grid; place-items: center; padding: 90px 20px 40px; position: relative; }
+.section { max-width: 1040px; margin: 0 auto; padding: 70px 22px; }
+.section h2 { font-size: clamp(26px, 3.4vw, 36px); text-align: center; }
+.section .lead { text-align: center; color: var(--muted); max-width: 640px; margin: 12px auto 0; line-height: 1.6; }
+.pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 34px; }
+.pillar { padding: 24px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); transition: transform 0.25s, border-color 0.25s; }
+.pillar:hover { transform: translateY(-4px); border-color: var(--accent); }
+.pillar .ic { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent); margin-bottom: 14px; }
+.pillar h3 { font-size: 18px; }
+.pillar p { color: var(--muted); font-size: 14px; line-height: 1.55; margin-top: 8px; }
+.steps4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 34px; counter-reset: s; }
+.steps4 > div { position: relative; padding: 22px 18px 18px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface); }
+.steps4 b { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #06101f; font-size: 14px; margin-bottom: 12px; }
+.steps4 h4 { font-size: 16px; }
+.steps4 p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 6px; }
+.whoframe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 34px; }
+.who { text-align: left; padding: 20px; border-radius: 18px; border: 1px solid var(--border); background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 14%, transparent), var(--surface)); color: inherit; transition: transform 0.25s, border-color 0.25s; }
+.who:hover { transform: translateY(-5px); border-color: var(--accent); }
+.who .ic { color: var(--accent); margin-bottom: 10px; }
+.who h4 { font-size: 16px; }
+.who p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 6px; }
+.datalist { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+.footer { border-top: 1px solid var(--border); padding: 26px 22px 40px; text-align: center; color: var(--muted); font-size: 13px; }
+.roleinfo { margin-top: 14px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.roleinfo b { display: block; font-size: 15px; }
+.roleinfo p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 4px; }
+@media (max-width: 900px) { .pillars, .steps4, .whoframe { grid-template-columns: repeat(2, 1fr); } .topnav { padding: 12px 14px; } }
+@media (max-width: 540px) { .pillars, .steps4, .whoframe { grid-template-columns: 1fr; } }
+label.drop { display: block; }

@@ -13,7 +13,7 @@ const REVIEW = ['Reading your documents', 'Matching the ID to the organisation',
 export default function Verify() {
   const nav = useNavigate()
   const { session, update, signOut } = useAuth()
-  const [step, setStep] = useState<0 | 1 | 2 | 3>(0)
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(session?.profile.kind ? 1 : 0)
   const [kindId, setKindId] = useState<string | null>(session?.profile.kind ?? null)
   const [orgId, setOrgId] = useState('')
   const [personId, setPersonId] = useState('')

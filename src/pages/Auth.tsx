@@ -4,7 +4,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Lock, ShieldCheck } from 'lucide-react'
 import { REAL_AUTH, nextStep, useAuth } from '../auth'
-import { ROLE_LIST, isRole } from '../roles'
+import { ALL_KINDS, ROLES, isRole } from '../roles'
 import type { RoleId } from '../roles'
 import { Background } from '../ui'
 import Select from '../Select'
@@ -15,7 +15,11 @@ export default function Auth() {
   const { session, signIn, signUp } = useAuth()
   const [mode, setMode] = useState<'signin' | 'signup'>(params.get('mode') === 'signup' ? 'signup' : 'signin')
   const initial = params.get('role')
-  const [role, setRole] = useState<RoleId>(isRole(initial) ? initial : 'company')
+  const initialRole: RoleId = isRole(initial) ? initial : 'company'
+  const [pick, setPick] = useState(`${initialRole}:${params.get('kind') ?? ROLES[initialRole].kinds[0].id}`)
+  const [roleId, kindId] = pick.split(':') as [RoleId, string]
+  const role = roleId
+  const kindDef = ROLES[roleId].kinds.find((k) => k.id === kindId) ?? ROLES[roleId].kinds[0]
   const [form, setForm] = useState({ name: '', org: '', email: '', password: '' })
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -29,7 +33,7 @@ export default function Auth() {
     setError(null)
     if (mode === 'signup' && form.password.length < 8) return setError('Use a password of at least 8 characters.')
     setBusy(true)
-    const err = mode === 'signup' ? await signUp({ ...form, role }) : await signIn(form.email, form.password)
+    const err = mode === 'signup' ? await signUp({ ...form, role, kind: kindDef.id }) : await signIn(form.email, form.password)
     setBusy(false)
     if (err) setError(err)
   }
@@ -54,7 +58,8 @@ export default function Auth() {
             <AnimatePresence initial={false}>
               {mode === 'signup' && (
                 <motion.div key="extra" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} style={{ overflow: 'hidden' }}>
-                  <Select label="I am a" placeholder="Choose your role" value={[role]} onChange={(v) => v[0] && setRole(v[0] as RoleId)} options={ROLE_LIST.map((r) => ({ value: r.id, label: r.label }))} />
+                  <Select label="I am a" placeholder="Choose who you are" value={[pick]} onChange={(v) => v[0] && setPick(v[0])} options={ALL_KINDS.map((k) => ({ value: `${k.role}:${k.kind.id}`, label: k.kind.label, group: k.roleLabel }))} />
+                  <div className="roleinfo"><b>{kindDef.label}</b><p>{kindDef.desc} {ROLES[roleId].goal}</p></div>
                   <label className="lbl">Your name</label>
                   <input className="input" required value={form.name} onChange={set('name')} autoComplete="name" />
                   <label className="lbl">Organisation</label>

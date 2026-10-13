@@ -216,3 +216,8 @@ export const isRole = (v: unknown): v is RoleId => typeof v === 'string' && v in
 
 /** The pattern every ID in this demo must meet: at least 6 letters or digits. */
 export const ID_PATTERN = /^[A-Za-z0-9\-/ ]{6,}$/
+
+/** Every specific type of organisation, with its role. The login dropdown lists these. */
+export const ALL_KINDS: { role: RoleId; roleLabel: string; kind: Kind }[] = ROLE_LIST.flatMap((r) => r.kinds.map((kind) => ({ role: r.id, roleLabel: r.label, kind })))
+
+export const findKind = (role: RoleId, kindId?: string): Kind => ROLES[role].kinds.find((k) => k.id === kindId) ?? ROLES[role].kinds[0]
