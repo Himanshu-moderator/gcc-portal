@@ -6,16 +6,17 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { isRole } from './roles'
+import { ROLES, isRole } from './roles'
 import type { RoleId } from './roles'
 
 export interface Profile {
   role: RoleId
   name: string
   org: string
-  emailVerified: boolean
+  kind?: string
   docVerified: boolean
-  docId?: string
+  orgProof?: string
+  personProof?: string
   onboarding?: Record<string, string[]>
 }
 
@@ -69,9 +70,10 @@ function toProfile(meta: Record<string, unknown> | undefined): Profile | null {
     role: meta.role,
     name: String(meta.name ?? ''),
     org: String(meta.org ?? ''),
-    emailVerified: meta.emailVerified === true,
+    kind: typeof meta.kind === 'string' ? meta.kind : undefined,
     docVerified: meta.docVerified === true,
-    docId: typeof meta.docId === 'string' ? meta.docId : undefined,
+    orgProof: typeof meta.orgProof === 'string' ? meta.orgProof : undefined,
+    personProof: typeof meta.personProof === 'string' ? meta.personProof : undefined,
     onboarding: (meta.onboarding as Record<string, string[]> | undefined) ?? undefined,
   }
 }
@@ -108,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const signUp: Ctx['signUp'] = useCallback(async ({ email, password, name, org, role }) => {
-    const profile: Profile = { role, name, org, emailVerified: false, docVerified: false }
+    const profile: Profile = { role, name, org, docVerified: false }
     if (supabase) {
       const { data, error } = await supabase.auth.signUp({ email, password, options: { data: profile } })
       if (error) return error.message
@@ -172,7 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const s: Session = {
       email: 'guest@gccportal.demo',
       source: 'guest',
-      profile: { role, name: 'Guest', org: 'Demo organisation', emailVerified: true, docVerified: true, onboarding: {} },
+      profile: { role, name: 'Guest', org: 'Demo organisation', kind: ROLES[role].kinds[0].id, docVerified: true, onboarding: {} },
     }
     write(LOCAL_SESSION, s)
     setSession(s)
@@ -190,7 +192,7 @@ export function useAuth(): Ctx {
 
 /** Where a signed-in person should be, based on how far they got. */
 export function nextStep(s: Session): '/verify' | '/onboarding' | '/app' {
-  if (!s.profile.emailVerified || !s.profile.docVerified) return '/verify'
+  if (!s.profile.docVerified) return '/verify'
   if (!s.profile.onboarding) return '/onboarding'
   return '/app'
 }

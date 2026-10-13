@@ -1,44 +1,33 @@
-import { useMemo, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BadgeCheck, CheckCircle2, FileUp, Loader2, Mail } from 'lucide-react'
+import { BadgeCheck, Building2, CheckCircle2, FileUp, Loader2, UserCheck } from 'lucide-react'
 import { nextStep, useAuth } from '../auth'
-import { ROLES } from '../roles'
+import { ID_PATTERN, ROLES } from '../roles'
+import type { Proof } from '../roles'
 import { Background } from '../ui'
 
-const REVIEW = ['Checking the ID format', 'Matching the organisation name', 'Reviewing the document']
+const REVIEW = ['Reading your documents', 'Matching the ID to the organisation', 'Confirming your authority to act']
 
+// 0 = choose who you are, 1 = prove the organisation, 2 = prove your authority, 3 = review
 export default function Verify() {
   const nav = useNavigate()
   const { session, update, signOut } = useAuth()
-  const [step, setStep] = useState<1 | 2 | 3>(session?.profile.emailVerified ? 2 : 1)
-  const demoCode = useMemo(() => String(Math.floor(100000 + Math.random() * 900000)), [])
-  const [code, setCode] = useState('')
-  const input = useRef<HTMLInputElement | null>(null)
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0)
+  const [kindId, setKindId] = useState<string | null>(session?.profile.kind ?? null)
+  const [orgId, setOrgId] = useState('')
+  const [personId, setPersonId] = useState('')
+  const [orgFile, setOrgFile] = useState<string | null>(null)
+  const [personFile, setPersonFile] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [docId, setDocId] = useState('')
-  const [file, setFile] = useState<string | null>(null)
   const [reviewing, setReviewing] = useState(-1)
 
   if (!session) return <Navigate to="/auth" replace />
   const role = ROLES[session.profile.role]
   if (nextStep(session) !== '/verify' && step !== 3) return <Navigate to={nextStep(session)} replace />
+  const kind = role.kinds.find((k) => k.id === kindId) ?? null
 
-  const onCode = (v: string) => {
-    setCode(v.replace(/D/g, '').slice(0, 6))
-    setError(null)
-  }
-
-  const checkCode = async () => {
-    if (code !== demoCode) return setError('That code does not match. Use the demo code shown above.')
-    await update({ emailVerified: true })
-    setStep(2)
-    setError(null)
-  }
-
-  const submitDoc = async () => {
-    if (!role.doc.pattern.test(docId.trim())) return setError('Enter an ID of at least 8 letters or digits.')
-    if (!file) return setError('Add the document to continue.')
+  const finish = async () => {
     setError(null)
     setStep(3)
     for (let i = 0; i < REVIEW.length; i++) {
@@ -47,54 +36,74 @@ export default function Verify() {
     }
     setReviewing(REVIEW.length)
     await new Promise((r) => setTimeout(r, 700))
-    await update({ docVerified: true, docId: docId.trim() })
+    await update({ kind: kindId ?? undefined, docVerified: true, orgProof: orgId.trim(), personProof: personId.trim() })
     nav('/onboarding')
   }
+
+  const proofForm = (proof: Proof, id: string, setId: (v: string) => void, file: string | null, setFile: (v: string | null) => void, onNext: () => void, nextLabel: string, back: 0 | 1) => (
+    <>
+      <label className="lbl">{proof.field}</label>
+      <input className="input" autoFocus value={id} onChange={(e) => { setId(e.target.value); setError(null) }} placeholder={proof.placeholder} />
+      <label className="lbl">{proof.upload}</label>
+      <label className={`drop ${file ? 'has' : ''}`}>
+        <input type="file" hidden onChange={(e) => setFile(e.target.files?.[0]?.name ?? null)} />
+        {file ? <><CheckCircle2 size={16} style={{ verticalAlign: -3, color: 'var(--ok)' }} /> {file}</> : <><FileUp size={16} style={{ verticalAlign: -3 }} /> Click to choose a file</>}
+      </label>
+      {!file && <button type="button" className="chip" style={{ marginTop: 8 }} onClick={() => setFile('sample-document.pdf')}>No file handy? Use a sample document</button>}
+      {error && <div className="err">{error}</div>}
+      <div className="row" style={{ justifyContent: 'space-between', marginTop: 22 }}>
+        <button className="btn ghost small" onClick={() => { setError(null); setStep(back) }}>Back</button>
+        <button className="btn" onClick={() => {
+          if (!ID_PATTERN.test(id.trim())) return setError('Enter an ID of at least 6 letters or digits.')
+          if (!file) return setError('Add the document to continue.')
+          onNext()
+        }}>{nextLabel}</button>
+      </div>
+    </>
+  )
 
   return (
     <div className="app" data-role={role.id}>
       <Background variant={role.id} />
       <div className="content center">
-        <motion.div className="card panel" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
-          <div className="steps">{[1, 2, 3].map((n) => <i key={n} className={step >= n ? 'on' : ''} />)}</div>
+        <motion.div className="card panel" style={{ maxWidth: 540 }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
+          <div className="steps">{[0, 1, 2, 3].map((n) => <i key={n} className={step >= n ? 'on' : ''} />)}</div>
           <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div key="s1" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                <span className="chip"><Mail size={13} /> Step 1 of 2 · Verify your email</span>
-                <h2 style={{ marginTop: 14 }}>Enter the 6-digit code</h2>
-                <p className="muted" style={{ marginTop: 8 }}>We would send it to <b style={{ color: 'var(--text)' }}>{session.email}</b>. {role.verifyEmailHint}</p>
-                <div className="note" style={{ marginTop: 14 }}>Demo: no email is sent. Your code is <b style={{ color: 'var(--accent)', letterSpacing: 3 }}>{demoCode}</b></div>
-                <div className="otp" onClick={() => input.current?.focus()} style={{ position: 'relative' }}>
-                  {Array.from({ length: 6 }, (_, i) => (
-                    <div key={i} className="input" style={{ textAlign: 'center', fontSize: 24, fontWeight: 700, padding: '14px 0', borderColor: code.length === i ? 'var(--accent)' : undefined }}>{code[i] ?? ''}</div>
+            {step === 0 && (
+              <motion.div key="s0" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <span className="chip"><BadgeCheck size={13} /> Verification · Who are you?</span>
+                <h2 style={{ marginTop: 14 }}>{role.kindTitle}</h2>
+                <p className="muted" style={{ marginTop: 8 }}>Everyone on the portal is verified, so the data and the people stay trustworthy. Your answer decides which documents we ask for.</p>
+                <div style={{ display: 'grid', gap: 10, marginTop: 18 }}>
+                  {role.kinds.map((k) => (
+                    <button key={k.id} className={`kind ${kindId === k.id ? 'on' : ''}`} onClick={() => setKindId(k.id)}>
+                      <b>{k.label}</b>
+                      <span className="muted" style={{ fontSize: 13 }}>{k.desc}</span>
+                    </button>
                   ))}
-                  <input ref={input} autoFocus value={code} onChange={(e) => onCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" aria-label="6-digit code" style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'text' }} />
                 </div>
-                {error && <div className="err">{error}</div>}
-                <button className="btn" style={{ width: '100%', marginTop: 12 }} disabled={code.length < 6} onClick={checkCode}>Verify email</button>
+                <button className="btn" style={{ width: '100%', marginTop: 20 }} disabled={!kind} onClick={() => setStep(1)}>Continue</button>
               </motion.div>
             )}
-            {step === 2 && (
+            {step === 1 && kind && (
+              <motion.div key="s1" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
+                <span className="chip"><Building2 size={13} /> Proof 1 of 2 · Your organisation</span>
+                <h2 style={{ marginTop: 14 }}>Prove your organisation</h2>
+                <p className="muted" style={{ marginTop: 6, fontSize: 14 }}>{session.profile.org} · {kind.label}</p>
+                {proofForm(kind.org, orgId, setOrgId, orgFile, setOrgFile, () => { setError(null); setStep(2) }, 'Next', 0)}
+              </motion.div>
+            )}
+            {step === 2 && kind && (
               <motion.div key="s2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}>
-                <span className="chip"><BadgeCheck size={13} /> Step 2 of 2 · {role.doc.title}</span>
-                <h2 style={{ marginTop: 14 }}>Prove who you are</h2>
-                <label className="lbl">{role.doc.field}</label>
-                <input className="input" value={docId} onChange={(e) => { setDocId(e.target.value); setError(null) }} placeholder={role.doc.placeholder} />
-                <div className="src">{role.doc.example}</div>
-                <label className="lbl">{role.doc.upload}</label>
-                <label className={`drop ${file ? 'has' : ''}`}>
-                  <input type="file" hidden onChange={(e) => setFile(e.target.files?.[0]?.name ?? null)} />
-                  {file ? <><CheckCircle2 size={16} style={{ verticalAlign: -3, color: 'var(--ok)' }} /> {file}</> : <><FileUp size={16} style={{ verticalAlign: -3 }} /> Click to choose a file</>}
-                </label>
-                {!file && <button type="button" className="chip" style={{ marginTop: 8 }} onClick={() => setFile('sample-document.pdf')}>No file handy? Use a sample document</button>}
-                {error && <div className="err">{error}</div>}
-                <button className="btn" style={{ width: '100%', marginTop: 20 }} onClick={submitDoc}>Submit for review</button>
-                <div className="note">Demo: nothing is uploaded or checked against a real register.</div>
+                <span className="chip"><UserCheck size={13} /> Proof 2 of 2 · Your authority</span>
+                <h2 style={{ marginTop: 14 }}>Prove you can act for it</h2>
+                <p className="muted" style={{ marginTop: 6, fontSize: 14 }}>{session.profile.name} · {session.profile.org}</p>
+                {proofForm(kind.person, personId, setPersonId, personFile, setPersonFile, finish, 'Submit for review', 1)}
               </motion.div>
             )}
             {step === 3 && (
               <motion.div key="s3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <h2>{reviewing >= REVIEW.length ? 'You are verified' : 'Reviewing your details'}</h2>
+                <h2>{reviewing >= REVIEW.length ? 'You are verified' : 'Reviewing your documents'}</h2>
                 <ul className="checks">
                   {REVIEW.map((r, i) => (
                     <motion.li key={r} initial={{ opacity: 0.4 }} animate={{ opacity: reviewing >= i ? 1 : 0.4, color: reviewing > i ? '#4ade80' : undefined }}>
@@ -106,7 +115,8 @@ export default function Verify() {
               </motion.div>
             )}
           </AnimatePresence>
-          <button className="chip" style={{ marginTop: 18 }} onClick={() => signOut().then(() => nav('/'))}>Sign out</button>
+          {step < 3 && <div className="note">Demo: nothing is uploaded or checked against a real register.</div>}
+          <button className="chip" style={{ marginTop: 14 }} onClick={() => signOut().then(() => nav('/'))}>Sign out</button>
         </motion.div>
       </div>
     </div>

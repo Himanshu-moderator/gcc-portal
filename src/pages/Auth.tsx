@@ -78,7 +78,7 @@ export default function Auth() {
             {error && <div className="err">{error}</div>}
             <button className="btn" style={{ width: '100%', marginTop: 20 }} disabled={busy}>{busy ? 'Please wait…' : mode === 'signup' ? 'Create account' : 'Sign in'}</button>
           </form>
-          <div className="note"><ShieldCheck size={13} style={{ verticalAlign: -2 }} /> Next you will verify your email and your organisation. In this demo the verification steps are simulated.</div>
+          <div className="note"><ShieldCheck size={13} style={{ verticalAlign: -2 }} /> Next you will say who you are and prove your organisation with the right documents. In this demo the checks are simulated.</div>
         </motion.div>
       </div>
     </div>

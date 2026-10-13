@@ -66,7 +66,7 @@ export default function Dashboard() {
         <main className="main">
           <div className="top">
             <div>
-              <span className="badge"><BadgeCheck size={13} /> Verified · {role.label}</span>
+              <span className="badge"><BadgeCheck size={13} /> Verified · {role.kinds.find((k) => k.id === session.profile.kind)?.label ?? role.label}</span>
               <h1 style={{ marginTop: 10 }}>{view.title}</h1>
               <p className="muted" style={{ marginTop: 6, maxWidth: 640 }}>{view.subtitle}</p>
             </div>

@@ -35,14 +35,16 @@ Each role has its own theme, background, onboarding questions, verification and 
 ## Sign-in and verification
 
 - **Sign-in is real.** Email and password through Supabase Auth, with the role stored on the account. Without Supabase keys the app falls back to a local demo mode.
-- **Verification is a demo.** Two steps per role (an email code, then an organisation ID and document), designed to show the experience. Nothing is checked against a real register.
+- **Verification is two proofs, tailored to who you are.** First you say what kind of organisation you are. Then you prove the **organisation** and your **authority to act for it**, each with an ID and a document that fits the type. The checks are simulated for the demo: nothing is uploaded or looked up in a real register.
 
-| Role | Step 1 | Step 2 |
-| --- | --- | --- |
-| Company | Work-email code | Company registration ID + certificate |
-| Consultant | Firm-email code | GSTIN / registration + firm proof |
-| Real estate | Firm-email code | RERA number + certificate |
-| Government | Official `.gov.in` email code | Department ID + authorisation letter |
+| Role | Kinds you can choose | Proof of the organisation | Proof of your authority |
+| --- | --- | --- | --- |
+| Company | First GCC, or expanding an existing one | Incorporation ID and certificate (home country, or MCA CIN) | Signatory or employee ID and authorisation letter |
+| Consultant | Strategy, law, audit and tax, recruitment / payroll / EOR | GSTIN, firm enrolment or ICAI FRN, with certificate | Partner ID, advocate enrolment or ICAI membership |
+| Real estate | Developer, broker, flex operator | RERA project or agent registration, or GSTIN | Signatory or photo ID |
+| Government | IT department, investment agency, industries department | Government Order or notification reference | Official service ID and authorisation letter |
+
+After verification, a short onboarding asks what you want to find or deal with, and the dashboard opens on it.
 
 ## Where the data comes from
 

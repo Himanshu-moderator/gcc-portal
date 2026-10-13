@@ -196,3 +196,6 @@ button.chip:hover { border-color: var(--accent); color: var(--text); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 .spin { animation: spin 0.9s linear infinite; }
+.kind { text-align: left; display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface); transition: all 0.2s; }
+.kind:hover { border-color: var(--accent); transform: translateX(4px); }
+.kind.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, transparent); box-shadow: 0 0 0 3px var(--glow); }
