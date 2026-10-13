@@ -82,7 +82,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="who" className="section" style={{ paddingTop: 20 }}>
+        <section id="who" className="section" style={{ paddingTop: 60, paddingBottom: 90 }}>
           <h2>Who it is for</h2>
           <div className="whoframe">
             {ROLE_LIST.map((r) => {
@@ -98,7 +98,7 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="how" className="section" style={{ paddingTop: 20 }}>
+        <section id="how" className="section" style={{ paddingTop: 90, paddingBottom: 110 }}>
           <h2>How it works</h2>
           <div className="steps4">
             <div><b>1</b><h4>Choose who you are</h4><p>Pick your type, such as a law firm or a state department.</p></div>
