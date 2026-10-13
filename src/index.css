@@ -207,7 +207,7 @@ button.chip:hover { border-color: var(--accent); color: var(--text); }
 .sel-btn.open { box-shadow: 0 0 0 3px var(--glow); }
 .sel-btn .chev { color: var(--muted); transition: transform 0.2s; flex: none; }
 .sel-btn.open .chev { transform: rotate(180deg); color: var(--accent); }
-.sel-list { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30; margin: 0; padding: 6px; list-style: none; max-height: 260px; overflow: auto; border-radius: 14px; border: 1px solid var(--border); background: color-mix(in srgb, var(--bg2) 92%, #000); box-shadow: 0 20px 50px -12px rgba(0,0,0,0.7), 0 0 0 1px var(--glow); backdrop-filter: blur(14px); }
+.sel-list { position: fixed; z-index: 1000; margin: 0; padding: 6px; list-style: none; max-height: 260px; overflow: auto; border-radius: 14px; border: 1px solid var(--border); background: color-mix(in srgb, var(--bg2) 98%, #000); box-shadow: 0 20px 50px -12px rgba(0,0,0,0.7), 0 0 0 1px var(--glow); backdrop-filter: blur(14px); }
 .sel-list li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: var(--text); font-size: 15px; transition: background 0.15s; }
 .sel-list li small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
 .sel-list li:hover { background: var(--surface2); }
@@ -285,3 +285,6 @@ label.drop { display: block; }
 .eyebrow { text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
 .divider { height: 1px; max-width: 760px; margin: 40px auto 0; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.45; }
 .band { margin-top: 70px; background: color-mix(in srgb, var(--accent) 7%, rgba(0,0,0,0.25)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+.sel-layer { position: absolute; top: 0; left: 0; z-index: 1000; }
+.sel-layer .sel-list { color: var(--text); font-family: var(--font); }
