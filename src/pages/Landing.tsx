@@ -73,6 +73,7 @@ export default function Landing() {
         </section>
 
         <section id="about" className="section">
+          <p className="eyebrow">About</p>
           <h2>What GCC Portal gives you</h2>
           <p className="lead">India has 2,000+ Global Capability Centres, and the facts about them are scattered across filings, press releases, reports and people's memories. We bring them together, show where they come from, and give each player the slice they need.</p>
           <div className="pillars">
@@ -82,8 +83,11 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="who" className="section" style={{ paddingTop: 60, paddingBottom: 90 }}>
-          <h2>Who it is for</h2>
+        <div className="divider" />
+
+        <section id="who" className="section" style={{ paddingTop: 90, paddingBottom: 130 }}>
+          <p className="eyebrow">Who it is for</p>
+          <h2>Built for four kinds of players</h2>
           <div className="whoframe">
             {ROLE_LIST.map((r) => {
               const Icon = ROLE_ICON[r.id]
@@ -98,8 +102,10 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="how" className="section" style={{ paddingTop: 90, paddingBottom: 110 }}>
-          <h2>How it works</h2>
+        <div className="band">
+        <section id="how" className="section" style={{ paddingTop: 100, paddingBottom: 110 }}>
+          <p className="eyebrow">How it works</p>
+          <h2>Four steps from sign-up to your dashboard</h2>
           <div className="steps4">
             <div><b>1</b><h4>Choose who you are</h4><p>Pick your type, such as a law firm or a state department.</p></div>
             <div><b>2</b><h4>Prove it</h4><p>Show your organisation and your authority with the right documents.</p></div>
@@ -115,6 +121,7 @@ export default function Landing() {
           </div>
           <p className="muted" style={{ textAlign: 'center', fontSize: 13, marginTop: 14 }}>The portal covers these over time. Today it focuses on markets, incentives, clusters and the set-up plan.</p>
         </section>
+        </div>
 
         <footer className="footer">
           <div className="stats-line" style={{ marginTop: 0, marginBottom: 14 }}>

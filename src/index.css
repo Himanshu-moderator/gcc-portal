@@ -281,3 +281,7 @@ textarea.input { font-family: var(--font); }
 @media (max-width: 900px) { .pillars, .steps4, .whoframe { grid-template-columns: repeat(2, 1fr); } .topnav { padding: 12px 14px; } }
 @media (max-width: 540px) { .pillars, .steps4, .whoframe { grid-template-columns: 1fr; } }
 label.drop { display: block; }
+
+.eyebrow { text-align: center; font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+.divider { height: 1px; max-width: 760px; margin: 40px auto 0; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.45; }
+.band { margin-top: 70px; background: color-mix(in srgb, var(--accent) 7%, rgba(0,0,0,0.25)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
