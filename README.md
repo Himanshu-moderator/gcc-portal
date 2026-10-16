@@ -13,7 +13,19 @@
 
 </div>
 
-> **Try it fast.** On the landing page, tap **Just look around as this role** under any card to open that stakeholder's dashboard with no sign-up. Or **Create account** to go through the real flow: secure sign-in, two-step verification and onboarding.
+<p align="center">
+  <img src="docs/screens/landing.jpg" width="32%" alt="Landing: pick who you are" />
+  <img src="docs/screens/launchpad.jpg" width="32%" alt="Company: Launchpad" />
+  <img src="docs/screens/city-finder.jpg" width="32%" alt="Company: City Finder" />
+</p>
+
+<p align="center">
+  <img src="docs/screens/providers.jpg" width="32%" alt="Company: Trusted providers" />
+  <img src="docs/screens/cluster-map.jpg" width="32%" alt="Real estate: Cluster Map" />
+  <img src="docs/screens/policy-desk.jpg" width="32%" alt="Government: Policy Desk" />
+</p>
+
+> **Try it fast.** Open the live demo, pick a role, and choose **Preview this portal without signing in** to see that stakeholder's dashboard with no sign-up. Or **Continue** to go through the real flow: secure sign-in, two-step verification and onboarding.
 
 ## The problem
 
