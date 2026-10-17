@@ -16,9 +16,9 @@ const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavio
 
 export default function Landing() {
   const nav = useNavigate()
-  const { session, guest } = useAuth()
+  const { session, guest, signOut } = useAuth()
   const report = useReport()
-  const [roleId, setRoleId] = useState<RoleId>('company')
+  const [roleId, setRoleId] = useState<RoleId>(session?.profile.role ?? 'company')
   const role = ROLES[roleId]
 
   const choose = (r: RoleId) => {
@@ -49,16 +49,30 @@ export default function Landing() {
             </motion.p>
 
             <motion.div className="card login" style={{ marginTop: 28 }} initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.15, duration: 0.5 }}>
-              <h2 style={{ fontSize: 24 }}>Sign in to continue</h2>
-              <div style={{ marginTop: 14 }}>
-                <Select label="I am a" placeholder="Choose your role" value={[roleId]} onChange={(v) => v[0] && setRoleId(v[0] as RoleId)} options={OPTIONS} />
-              </div>
-              <motion.div key={roleId} className="roleinfo" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
-                <b>{role.label}</b>
-                <p>{role.goal}</p>
-              </motion.div>
+              <h2 style={{ fontSize: 24 }}>{session ? 'Welcome back' : 'Sign in to continue'}</h2>
               {session ? (
-                <button className="btn" style={{ width: '100%', marginTop: 18 }} onClick={() => nav(nextStep(session))}>Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} /></button>
+                <motion.div className="roleinfo" style={{ marginTop: 14 }} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+                  <b>{ROLES[session.profile.role].label}</b>
+                  <p>You are signed in as {session.profile.name}. Continue where you left off, or sign out to choose a different role.</p>
+                </motion.div>
+              ) : (
+                <>
+                  <div style={{ marginTop: 14 }}>
+                    <Select label="I am a" placeholder="Choose your role" value={[roleId]} onChange={(v) => v[0] && setRoleId(v[0] as RoleId)} options={OPTIONS} />
+                  </div>
+                  <motion.div key={roleId} className="roleinfo" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
+                    <b>{role.label}</b>
+                    <p>{role.goal}</p>
+                  </motion.div>
+                </>
+              )}
+              {session ? (
+                <>
+                  <button className="btn" style={{ width: '100%', marginTop: 18 }} onClick={() => nav(nextStep(session))}>Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} /></button>
+                  <div style={{ textAlign: 'center', marginTop: 12 }}>
+                    <button className="linkbtn" onClick={() => signOut()}>Sign out to choose another role</button>
+                  </div>
+                </>
               ) : (
                 <button className="btn" style={{ width: '100%', marginTop: 18 }} onClick={() => nav(`/auth?role=${roleId}`)}>Continue <ArrowRight size={16} style={{ verticalAlign: -3 }} /></button>
               )}
